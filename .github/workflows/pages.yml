@@ -1,0 +1,51 @@
+# 部署到 GitHub Pages。纯静态站点，没有构建步骤：仓库根目录直接就是可发布的产物。
+# 测试先跑一遍，失败就不发布，避免把坏版本推到线上。
+name: Deploy to Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# 只读源码 + 写 Pages 部署所需的令牌，不给多余权限。
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同一时间只保留一个部署；新推送进来时不打断正在进行的那次。
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      # 引擎测试用 node 内置 test runner，无第三方依赖，不需要 install。
+      - run: node --test "src/**/*.test.js"
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      # enablement 让首次运行自行把 Pages 打开并把发布源设为 Actions，
+      # 省掉仓库设置里的手动一步；已启用时该步骤幂等。
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      # 整个仓库根目录作为产物上传；index.html 与 assets/ 的引用都是相对路径，
+      # 因此项目页的子路径（/splendor-pokemon/）下也能正常加载。
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deploy
+        uses: actions/deploy-pages@v4

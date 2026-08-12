@@ -1,0 +1,644 @@
+[
+  {
+    "url": "https://game-llk.devnode.uk/music/pokemon-rb-title-screen.mp3",
+    "path": "music/pokemon-rb-title-screen.mp3",
+    "mime": "audio/mpeg",
+    "bytes": 1897770
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/pikachu.gif",
+    "path": "pokemon/animated/pikachu.gif",
+    "mime": "image/gif",
+    "bytes": 23958
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/pidgeot.gif",
+    "path": "pokemon/animated/pidgeot.gif",
+    "mime": "image/gif",
+    "bytes": 28593
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/butterfree.gif",
+    "path": "pokemon/animated/butterfree.gif",
+    "mime": "image/gif",
+    "bytes": 29410
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/eevee.gif",
+    "path": "pokemon/animated/eevee.gif",
+    "mime": "image/gif",
+    "bytes": 29310
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/charizard.gif",
+    "path": "pokemon/animated/charizard.gif",
+    "mime": "image/gif",
+    "bytes": 82587
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/gengar.gif",
+    "path": "pokemon/animated/gengar.gif",
+    "mime": "image/gif",
+    "bytes": 24933
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/charmander.gif",
+    "path": "pokemon/animated/charmander.gif",
+    "mime": "image/gif",
+    "bytes": 21300
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/dragonite.gif",
+    "path": "pokemon/animated/dragonite.gif",
+    "mime": "image/gif",
+    "bytes": 52880
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/mew.gif",
+    "path": "pokemon/animated/mew.gif",
+    "mime": "image/gif",
+    "bytes": 26267
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/pikachu.png",
+    "path": "pokemon/pikachu.png",
+    "mime": "image/png",
+    "bytes": 597
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/bulbasaur.png",
+    "path": "pokemon/bulbasaur.png",
+    "mime": "image/png",
+    "bytes": 543
+  },
+  {
+    "url": "https://game-llk.devnode.uk/music/pokemon-rb-wild-battle.mp3",
+    "path": "music/pokemon-rb-wild-battle.mp3",
+    "mime": "audio/mpeg",
+    "bytes": 1447210
+  },
+  {
+    "url": "https://game-llk.devnode.uk/music/pokemon-rb-victory-wild.mp3",
+    "path": "music/pokemon-rb-victory-wild.mp3",
+    "mime": "audio/mpeg",
+    "bytes": 504713
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/charmander.png",
+    "path": "pokemon/charmander.png",
+    "mime": "image/png",
+    "bytes": 583
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/squirtle.png",
+    "path": "pokemon/squirtle.png",
+    "mime": "image/png",
+    "bytes": 575
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/eevee.png",
+    "path": "pokemon/eevee.png",
+    "mime": "image/png",
+    "bytes": 582
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/jigglypuff.png",
+    "path": "pokemon/jigglypuff.png",
+    "mime": "image/png",
+    "bytes": 492
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/psyduck.png",
+    "path": "pokemon/psyduck.png",
+    "mime": "image/png",
+    "bytes": 513
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/snorlax.png",
+    "path": "pokemon/snorlax.png",
+    "mime": "image/png",
+    "bytes": 916
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/gengar.png",
+    "path": "pokemon/gengar.png",
+    "mime": "image/png",
+    "bytes": 802
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/meowth.png",
+    "path": "pokemon/meowth.png",
+    "mime": "image/png",
+    "bytes": 722
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/togepi.png",
+    "path": "pokemon/togepi.png",
+    "mime": "image/png",
+    "bytes": 443
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/magikarp.png",
+    "path": "pokemon/magikarp.png",
+    "mime": "image/png",
+    "bytes": 832
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/lapras.png",
+    "path": "pokemon/lapras.png",
+    "mime": "image/png",
+    "bytes": 877
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/vulpix.png",
+    "path": "pokemon/vulpix.png",
+    "mime": "image/png",
+    "bytes": 749
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/oddish.png",
+    "path": "pokemon/oddish.png",
+    "mime": "image/png",
+    "bytes": 469
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/poliwag.png",
+    "path": "pokemon/poliwag.png",
+    "mime": "image/png",
+    "bytes": 581
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/abra.png",
+    "path": "pokemon/abra.png",
+    "mime": "image/png",
+    "bytes": 652
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cubone.png",
+    "path": "pokemon/cubone.png",
+    "mime": "image/png",
+    "bytes": 588
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/dratini.png",
+    "path": "pokemon/dratini.png",
+    "mime": "image/png",
+    "bytes": 535
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/mew.png",
+    "path": "pokemon/mew.png",
+    "mime": "image/png",
+    "bytes": 556
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/chikorita.png",
+    "path": "pokemon/chikorita.png",
+    "mime": "image/png",
+    "bytes": 543
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cyndaquil.png",
+    "path": "pokemon/cyndaquil.png",
+    "mime": "image/png",
+    "bytes": 580
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/totodile.png",
+    "path": "pokemon/totodile.png",
+    "mime": "image/png",
+    "bytes": 552
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/bulbasaur.gif",
+    "path": "pokemon/animated/bulbasaur.gif",
+    "mime": "image/gif",
+    "bytes": 19484
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/squirtle.gif",
+    "path": "pokemon/animated/squirtle.gif",
+    "mime": "image/gif",
+    "bytes": 10810
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/chikorita.gif",
+    "path": "pokemon/animated/chikorita.gif",
+    "mime": "image/gif",
+    "bytes": 10804
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/cyndaquil.gif",
+    "path": "pokemon/animated/cyndaquil.gif",
+    "mime": "image/gif",
+    "bytes": 33662
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/totodile.gif",
+    "path": "pokemon/animated/totodile.gif",
+    "mime": "image/gif",
+    "bytes": 18143
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/mewtwo.gif",
+    "path": "pokemon/animated/mewtwo.gif",
+    "mime": "image/gif",
+    "bytes": 46133
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/kyogre.gif",
+    "path": "pokemon/animated/kyogre.gif",
+    "mime": "image/gif",
+    "bytes": 171856
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/groudon.gif",
+    "path": "pokemon/animated/groudon.gif",
+    "mime": "image/gif",
+    "bytes": 71868
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/jigglypuff.gif",
+    "path": "pokemon/animated/jigglypuff.gif",
+    "mime": "image/gif",
+    "bytes": 20371
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/psyduck.gif",
+    "path": "pokemon/animated/psyduck.gif",
+    "mime": "image/gif",
+    "bytes": 9253
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/snorlax.gif",
+    "path": "pokemon/animated/snorlax.gif",
+    "mime": "image/gif",
+    "bytes": 74941
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/meowth.gif",
+    "path": "pokemon/animated/meowth.gif",
+    "mime": "image/gif",
+    "bytes": 40062
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/togepi.gif",
+    "path": "pokemon/animated/togepi.gif",
+    "mime": "image/gif",
+    "bytes": 15021
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/magikarp.gif",
+    "path": "pokemon/animated/magikarp.gif",
+    "mime": "image/gif",
+    "bytes": 38806
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/lapras.gif",
+    "path": "pokemon/animated/lapras.gif",
+    "mime": "image/gif",
+    "bytes": 27308
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/vulpix.gif",
+    "path": "pokemon/animated/vulpix.gif",
+    "mime": "image/gif",
+    "bytes": 26653
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/oddish.gif",
+    "path": "pokemon/animated/oddish.gif",
+    "mime": "image/gif",
+    "bytes": 18424
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/poliwag.gif",
+    "path": "pokemon/animated/poliwag.gif",
+    "mime": "image/gif",
+    "bytes": 17507
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/abra.gif",
+    "path": "pokemon/animated/abra.gif",
+    "mime": "image/gif",
+    "bytes": 29560
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/cubone.gif",
+    "path": "pokemon/animated/cubone.gif",
+    "mime": "image/gif",
+    "bytes": 34123
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/dratini.gif",
+    "path": "pokemon/animated/dratini.gif",
+    "mime": "image/gif",
+    "bytes": 10744
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/pikachu.ogg",
+    "path": "pokemon/cries/pikachu.ogg",
+    "mime": "audio/ogg",
+    "bytes": 6020
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/bulbasaur.ogg",
+    "path": "pokemon/cries/bulbasaur.ogg",
+    "mime": "audio/ogg",
+    "bytes": 5813
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/charmander.ogg",
+    "path": "pokemon/cries/charmander.ogg",
+    "mime": "audio/ogg",
+    "bytes": 5588
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/squirtle.ogg",
+    "path": "pokemon/cries/squirtle.ogg",
+    "mime": "audio/ogg",
+    "bytes": 5601
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/chikorita.ogg",
+    "path": "pokemon/cries/chikorita.ogg",
+    "mime": "audio/ogg",
+    "bytes": 8775
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/cyndaquil.ogg",
+    "path": "pokemon/cries/cyndaquil.ogg",
+    "mime": "audio/ogg",
+    "bytes": 8753
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/totodile.ogg",
+    "path": "pokemon/cries/totodile.ogg",
+    "mime": "audio/ogg",
+    "bytes": 13157
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/eevee.ogg",
+    "path": "pokemon/cries/eevee.ogg",
+    "mime": "audio/ogg",
+    "bytes": 5256
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/jigglypuff.ogg",
+    "path": "pokemon/cries/jigglypuff.ogg",
+    "mime": "audio/ogg",
+    "bytes": 3777
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/psyduck.ogg",
+    "path": "pokemon/cries/psyduck.ogg",
+    "mime": "audio/ogg",
+    "bytes": 5294
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/snorlax.ogg",
+    "path": "pokemon/cries/snorlax.ogg",
+    "mime": "audio/ogg",
+    "bytes": 3811
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/gengar.ogg",
+    "path": "pokemon/cries/gengar.ogg",
+    "mime": "audio/ogg",
+    "bytes": 5529
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/meowth.ogg",
+    "path": "pokemon/cries/meowth.ogg",
+    "mime": "audio/ogg",
+    "bytes": 4464
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/togepi.ogg",
+    "path": "pokemon/cries/togepi.ogg",
+    "mime": "audio/ogg",
+    "bytes": 4748
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/magikarp.ogg",
+    "path": "pokemon/cries/magikarp.ogg",
+    "mime": "audio/ogg",
+    "bytes": 6418
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/lapras.ogg",
+    "path": "pokemon/cries/lapras.ogg",
+    "mime": "audio/ogg",
+    "bytes": 5658
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/vulpix.ogg",
+    "path": "pokemon/cries/vulpix.ogg",
+    "mime": "audio/ogg",
+    "bytes": 7385
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/oddish.ogg",
+    "path": "pokemon/cries/oddish.ogg",
+    "mime": "audio/ogg",
+    "bytes": 5651
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/poliwag.ogg",
+    "path": "pokemon/cries/poliwag.ogg",
+    "mime": "audio/ogg",
+    "bytes": 4707
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/abra.ogg",
+    "path": "pokemon/cries/abra.ogg",
+    "mime": "audio/ogg",
+    "bytes": 7157
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/cubone.ogg",
+    "path": "pokemon/cries/cubone.ogg",
+    "mime": "audio/ogg",
+    "bytes": 5640
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/dratini.ogg",
+    "path": "pokemon/cries/dratini.ogg",
+    "mime": "audio/ogg",
+    "bytes": 4989
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/cries/mew.ogg",
+    "path": "pokemon/cries/mew.ogg",
+    "mime": "audio/ogg",
+    "bytes": 8552
+  },
+  {
+    "url": "https://game-llk.devnode.uk/characters/ash-mom.svg",
+    "path": "characters/ash-mom.svg",
+    "mime": "image/svg+xml",
+    "bytes": 746
+  },
+  {
+    "url": "https://game-llk.devnode.uk/characters/professor-oak.svg",
+    "path": "characters/professor-oak.svg",
+    "mime": "image/svg+xml",
+    "bytes": 821
+  },
+  {
+    "url": "https://game-llk.devnode.uk/characters/ditto.svg",
+    "path": "characters/ditto.svg",
+    "mime": "image/svg+xml",
+    "bytes": 612
+  },
+  {
+    "url": "https://game-llk.devnode.uk/characters/nurse-joy.svg",
+    "path": "characters/nurse-joy.svg",
+    "mime": "image/svg+xml",
+    "bytes": 739
+  },
+  {
+    "url": "https://game-llk.devnode.uk/characters/professor-birch.svg",
+    "path": "characters/professor-birch.svg",
+    "mime": "image/svg+xml",
+    "bytes": 680
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/ivysaur.png",
+    "path": "pokemon/ivysaur.png",
+    "mime": "image/png",
+    "bytes": 870
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/ivysaur.gif",
+    "path": "pokemon/animated/ivysaur.gif",
+    "mime": "image/gif",
+    "bytes": 40287
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/venusaur.png",
+    "path": "pokemon/venusaur.png",
+    "mime": "image/png",
+    "bytes": 1531
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/venusaur.gif",
+    "path": "pokemon/animated/venusaur.gif",
+    "mime": "image/gif",
+    "bytes": 125309
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/charmeleon.png",
+    "path": "pokemon/charmeleon.png",
+    "mime": "image/png",
+    "bytes": 832
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/charmeleon.gif",
+    "path": "pokemon/animated/charmeleon.gif",
+    "mime": "image/gif",
+    "bytes": 28809
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/charizard.png",
+    "path": "pokemon/charizard.png",
+    "mime": "image/png",
+    "bytes": 1330
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/wartortle.png",
+    "path": "pokemon/wartortle.png",
+    "mime": "image/png",
+    "bytes": 946
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/wartortle.gif",
+    "path": "pokemon/animated/wartortle.gif",
+    "mime": "image/gif",
+    "bytes": 35169
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/blastoise.png",
+    "path": "pokemon/blastoise.png",
+    "mime": "image/png",
+    "bytes": 1170
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/blastoise.gif",
+    "path": "pokemon/animated/blastoise.gif",
+    "mime": "image/gif",
+    "bytes": 121970
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/bayleef.png",
+    "path": "pokemon/bayleef.png",
+    "mime": "image/png",
+    "bytes": 784
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/bayleef.gif",
+    "path": "pokemon/animated/bayleef.gif",
+    "mime": "image/gif",
+    "bytes": 39618
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/meganium.png",
+    "path": "pokemon/meganium.png",
+    "mime": "image/png",
+    "bytes": 1109
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/meganium.gif",
+    "path": "pokemon/animated/meganium.gif",
+    "mime": "image/gif",
+    "bytes": 42886
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/quilava.png",
+    "path": "pokemon/quilava.png",
+    "mime": "image/png",
+    "bytes": 808
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/quilava.gif",
+    "path": "pokemon/animated/quilava.gif",
+    "mime": "image/gif",
+    "bytes": 36127
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/typhlosion.png",
+    "path": "pokemon/typhlosion.png",
+    "mime": "image/png",
+    "bytes": 920
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/typhlosion.gif",
+    "path": "pokemon/animated/typhlosion.gif",
+    "mime": "image/gif",
+    "bytes": 72156
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/croconaw.png",
+    "path": "pokemon/croconaw.png",
+    "mime": "image/png",
+    "bytes": 719
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/croconaw.gif",
+    "path": "pokemon/animated/croconaw.gif",
+    "mime": "image/gif",
+    "bytes": 46790
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/feraligatr.png",
+    "path": "pokemon/feraligatr.png",
+    "mime": "image/png",
+    "bytes": 1153
+  },
+  {
+    "url": "https://game-llk.devnode.uk/pokemon/animated/feraligatr.gif",
+    "path": "pokemon/animated/feraligatr.gif",
+    "mime": "image/gif",
+    "bytes": 52320
+  }
+]

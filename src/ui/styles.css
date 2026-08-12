@@ -1,0 +1,279 @@
+/* 像素风：硬边框、无圆角、无渐变、位移硬阴影。配色取初代红蓝。 */
+@font-face {
+  font-family: 'FusionPixel';
+  src: url('../../assets/fonts/fusion-pixel-12px-sc.woff2') format('woff2');
+  font-weight: normal;
+  font-display: swap;
+}
+
+:root {
+  /* 宝石色：为浅底板重新调过，保证 12px 点阵字在上面读得清 */
+  --w: #d8cfb0; --u: #3878d8; --g: #38a848; --r: #e04038; --k: #7838b0; --gold: #f0c020;
+  --ink: #181820; --ink2: #4c4c60;
+  --paper: #f8f4e0; --paper2: #e4dcc0; --paper3: #d0c8a8;
+  --bg: #204090; --bg2: #182c68;
+  --accent: #e04038; --accent2: #3878d8;
+  --text: #181820; --muted: #5c5c70;
+  --radius: 0; --shadow: 4px 4px 0 rgba(0,0,0,.35);
+  --px: 3px; /* 统一边框宽度 */
+  font-family: 'FusionPixel', 'Zpix', monospace;
+  font-size: 12px;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: unset;
+  font-synthesis: none;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  background-image:
+    linear-gradient(45deg, rgba(255,255,255,.04) 25%, transparent 25%, transparent 75%, rgba(255,255,255,.04) 75%),
+    linear-gradient(45deg, rgba(255,255,255,.04) 25%, transparent 25%, transparent 75%, rgba(255,255,255,.04) 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 12px;
+  line-height: 1.6;
+}
+img { image-rendering: pixelated; }
+/* 点阵字体只在 12px 整数倍上清晰，小字号一律锁回 12px，靠颜色区分层级 */
+small { font-size: inherit; color: var(--muted); }
+.tally small { color: var(--accent2); }
+.hidden { display: none !important; }
+button { font: inherit; cursor: pointer; border: none; }
+
+/* 像素按钮：按下时阴影收进去，模拟物理下沉 */
+.btn-primary {
+  background: var(--accent); color: var(--paper);
+  border: var(--px) solid var(--ink);
+  padding: 10px 20px; font-size: 12px;
+  box-shadow: var(--shadow);
+  text-shadow: 1px 1px 0 rgba(0,0,0,.5);
+}
+.btn-primary:active { box-shadow: 1px 1px 0 rgba(0,0,0,.35); transform: translate(3px, 3px); }
+.btn-primary:disabled { background: var(--paper3); color: var(--ink2); box-shadow: none; transform: none; cursor: not-allowed; text-shadow: none; }
+.btn-icon {
+  background: var(--paper); color: var(--ink);
+  border: var(--px) solid var(--ink);
+  /* 宽度自适应文字（「音」1 字、「规则」2 字），高度固定保持顶栏对齐。 */
+  min-width: 36px; height: 36px; padding: 0 8px; font-size: 14px;
+  box-shadow: 3px 3px 0 rgba(0,0,0,.35);
+}
+.btn-icon:active { transform: translate(3px, 3px); box-shadow: none; }
+
+/* 开始界面 */
+.screen { min-height: 100vh; }
+#setup { display: grid; place-items: center; padding: 24px; }
+.setup-card {
+  background: var(--paper); border: var(--px) solid var(--ink);
+  padding: 28px; max-width: 460px; width: 100%;
+  box-shadow: 6px 6px 0 rgba(0,0,0,.4);
+}
+.setup-card h1 { font-size: 24px; line-height: 1.4; font-weight: normal; }
+.setup-card h1 span { color: var(--accent); }
+.tagline { color: var(--muted); margin: 12px 0 22px; line-height: 1.8; }
+.field { display: block; margin-bottom: 16px; }
+.field > span { display: block; color: var(--muted); margin-bottom: 6px; }
+select, input[type="text"] {
+  width: 100%; background: var(--paper2); color: var(--ink);
+  border: var(--px) solid var(--ink); padding: 8px 10px; font-size: 12px; font-family: inherit;
+  border-radius: 0; -webkit-appearance: none; appearance: none;
+}
+input::placeholder { color: var(--muted); opacity: 1; }
+/* 房间码是 ASCII 码值，等宽 + 大写字距更好认 */
+#join-code { text-transform: uppercase; letter-spacing: 1px; }
+select:focus, input:focus { outline: var(--px) solid var(--accent2); outline-offset: -1px; }
+.name-fields { display: grid; gap: 8px; margin-bottom: 20px; }
+.hint { color: var(--muted); margin-top: 14px; text-align: center; }
+
+/* 游戏布局 */
+#game { display: grid; grid-template-columns: 1fr 300px; grid-template-rows: auto 1fr auto; grid-template-areas: "top top" "table players" "action action"; gap: 12px; padding: 12px; height: 100vh; }
+.topbar { grid-area: top; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.table { grid-area: table; overflow-y: auto; padding-right: 6px; }
+/* padding 给 .player.active 的外扩红框留位：overflow-y:auto 会让 overflow-x 计算为 auto，否则左右被裁。 */
+.players { grid-area: players; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 4px; }
+.action-bar {
+  grid-area: action; background: var(--paper); border: var(--px) solid var(--ink);
+  padding: 10px 14px; min-height: 60px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  box-shadow: var(--shadow);
+}
+/* 银行宝石：方形筹码，选中时描一圈黑框 + 角标数量 */
+.bank { display: flex; gap: 8px; flex-wrap: wrap; }
+.gem {
+  --c: #888; display: flex; align-items: center; gap: 6px;
+  background: var(--paper); border: var(--px) solid var(--ink);
+  padding: 5px 10px; user-select: none; position: relative;
+  box-shadow: 3px 3px 0 rgba(0,0,0,.3);
+}
+.gem .dot { width: 14px; height: 14px; background: var(--c); border: 2px solid var(--ink); }
+.gem.selectable { cursor: pointer; }
+.gem.selectable:hover { background: var(--gold); }
+.gem.picked { background: var(--gold); box-shadow: inset 0 0 0 2px var(--ink), 3px 3px 0 rgba(0,0,0,.3); }
+.gem[data-picked]::after {
+  content: "×" attr(data-picked); position: absolute; top: -8px; right: -8px;
+  background: var(--accent); color: var(--paper); border: 2px solid var(--ink);
+  padding: 0 3px; font-size: 12px; line-height: 1.2;
+}
+.gem[data-color=w]{--c:var(--w)} .gem[data-color=u]{--c:var(--u)} .gem[data-color=g]{--c:var(--g)} .gem[data-color=r]{--c:var(--r)} .gem[data-color=k]{--c:var(--k)} .gem[data-color=gold]{--c:var(--gold)}
+
+/* 贵族行 */
+.nobles-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.noble { background: var(--paper); border: var(--px) solid var(--ink); padding: 6px; width: 92px; text-align: center; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+.noble img { width: 52px; height: 52px; object-fit: contain; }
+.noble .pts { color: var(--accent); font-size: 12px; }
+.noble .req { display: flex; gap: 3px; justify-content: center; margin-top: 4px; flex-wrap: wrap; }
+/* 同 .cost i 的墨迹补偿，尺寸同样取奇数 */
+.noble .req i { width: 15px; height: 15px; display: inline-grid; place-items: center; font-style: normal; line-height: 1; padding: 0 0 1px 1px; color: var(--ink); border: 2px solid var(--ink); font-size: 12px; }
+
+/* 卡牌区 */
+.tier { margin-bottom: 12px; }
+.tier-head { display: flex; align-items: center; gap: 8px; color: var(--paper2); margin-bottom: 6px; text-shadow: 1px 1px 0 rgba(0,0,0,.5); }
+.tier-row { display: flex; gap: 10px; align-items: stretch; flex-wrap: wrap; }
+.deck {
+  width: 112px; background: var(--bg2); border: var(--px) solid var(--ink);
+  display: grid; place-items: center; color: var(--paper2); text-align: center;
+  box-shadow: 3px 3px 0 rgba(0,0,0,.3);
+}
+.card {
+  width: 112px; background: var(--paper); border: var(--px) solid var(--ink);
+  overflow: hidden; position: relative; box-shadow: 3px 3px 0 rgba(0,0,0,.3);
+}
+.card.selectable { cursor: pointer; }
+.card.selectable:hover { background: #fffdf0; }
+.card.selected { box-shadow: 0 0 0 3px var(--accent), 3px 3px 0 rgba(0,0,0,.3); }
+.card.afford::after {
+  content: "可购"; position: absolute; top: 4px; right: 4px;
+  background: var(--g); color: var(--ink); border: 2px solid var(--ink); padding: 0 3px;
+}
+.card .head { display: flex; justify-content: space-between; padding: 4px 6px; align-items: center; background: var(--paper2); border-bottom: 2px solid var(--ink); }
+.card .pts { font-size: 12px; color: var(--accent); }
+.card .bonus { width: 16px; height: 16px; border: 2px solid var(--ink); }
+.card .sprite { height: 76px; display: grid; place-items: center; background: var(--paper); }
+.card .sprite img { max-height: 70px; max-width: 92px; }
+.card .cname { text-align: center; padding: 0 4px 2px; color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card .cost { display: flex; flex-wrap: wrap; gap: 3px; padding: 5px; border-top: 2px solid var(--ink); background: var(--paper2); }
+/* 点阵字形的墨迹天生偏心：字体 content-area 18px，line-box 中心在 baseline+5px，
+   而所有字形墨迹中心在 +4.5px → 偏下 0.5px；数字 advance 6px 但墨迹只占左 5px
+   （右 1px 是字间距）→ 偏左 0.5px。这偏差与 line-height、容器高都无关，
+   place-items:center 消不掉，靠整数 padding 把居中区推回半像素。
+   尺寸取奇数：墨迹 9×5 是奇数，偶数容器里居中会把字形压到半像素上而发虚。 */
+.card .cost i { font-style: normal; min-width: 17px; height: 17px; display: inline-grid; place-items: center; font-size: 12px; line-height: 1; padding: 0 0 1px 1px; color: var(--ink); border: 2px solid var(--ink); }
+
+.bonus[data-color=w],.cost i[data-color=w]{background:var(--w)} .bonus[data-color=u],.cost i[data-color=u]{background:var(--u);color:var(--paper)} .bonus[data-color=g],.cost i[data-color=g]{background:var(--g)} .bonus[data-color=r],.cost i[data-color=r]{background:var(--r);color:var(--paper)} .bonus[data-color=k],.cost i[data-color=k]{background:var(--k);color:var(--paper)}
+/* 玩家面板 */
+.player { background: var(--paper); border: var(--px) solid var(--ink); padding: 10px; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
+/* 当前回合方：与 .card.selected 同色的红框，比原黄框更抢眼，方便多人轮转时定位。 */
+.player.active { background: #fffdf0; box-shadow: 0 0 0 4px var(--accent), 3px 3px 0 rgba(0,0,0,.3); }
+.player .name { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.player .score { color: var(--accent); }
+.player .tallies { display: flex; gap: 4px; flex-wrap: wrap; }
+.tally { display: flex; align-items: center; gap: 3px; background: var(--paper2); border: 2px solid var(--ink); padding: 1px 4px; }
+.tally .dot { width: 10px; height: 10px; border: 1px solid var(--ink); }
+.player .reserved { margin-top: 8px; border-top: 2px dashed var(--paper3); padding-top: 6px; }
+.res-label { color: var(--muted); margin-bottom: 4px; }
+.res-strip { display: flex; gap: 5px; flex-wrap: wrap; }
+
+/* 预定卡缩略：够钱时描绿边，本人回合可直接点买 */
+.res-card {
+  position: relative; width: 42px; height: 42px;
+  background: var(--paper2); border: 2px solid var(--ink);
+  display: grid; place-items: center;
+}
+.res-card img { max-width: 36px; max-height: 34px; }
+.res-card.afford { background: #e8f8e0; box-shadow: 0 0 0 2px var(--g); }
+.res-card.selectable { cursor: pointer; }
+.res-card.selectable:hover { background: var(--gold); }
+.res-card.locked { cursor: not-allowed; }
+.res-card.locked:hover { background: var(--paper3); }
+.res-pts { position: absolute; top: -6px; left: -4px; background: var(--accent); color: var(--paper); border: 2px solid var(--ink); padding: 0 2px; font-size: 12px; line-height: 1.1; }
+.res-bonus { position: absolute; bottom: -3px; right: -3px; width: 12px; height: 12px; border: 2px solid var(--ink); }
+
+/* 动作栏 */
+.turn-label { color: var(--ink); }
+.turn-label b { color: var(--accent); font-weight: normal; }
+/* 通用行内色块：替代原先的 emoji。emoji 会走系统彩色字体，在点阵字里既破风格又撑高行盒。 */
+.sw { display: inline-block; width: 10px; height: 10px; border: 2px solid var(--ink); vertical-align: -1px; }
+
+.sel-desc { background: var(--paper2); border: 2px solid var(--ink); padding: 4px 8px; }
+.sel-desc b { font-weight: normal; color: var(--accent2); }
+.bar-hint { color: var(--muted); }
+.action-bar .spacer { flex: 1; }
+.btn-mini {
+  background: var(--paper2); color: var(--ink); border: var(--px) solid var(--ink);
+  padding: 6px 12px; box-shadow: 3px 3px 0 rgba(0,0,0,.3);
+}
+.btn-mini:hover:not(:disabled) { background: var(--gold); }
+.btn-mini:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: none; }
+.btn-mini.primary { background: var(--accent); color: var(--paper); }
+.btn-mini.primary:hover:not(:disabled) { background: #f05048; }
+.btn-mini:disabled { background: var(--paper3); color: var(--ink2); box-shadow: none; cursor: not-allowed; }
+
+/* 悬浮成本提示 */
+.cost-tip {
+  position: fixed; z-index: 90; pointer-events: none;
+  background: var(--paper); border: var(--px) solid var(--ink);
+  padding: 6px 8px; min-width: 132px; box-shadow: 4px 4px 0 rgba(0,0,0,.4);
+  line-height: 1.7;
+}
+.cost-tip[hidden] { display: none; }
+.t-head { border-bottom: 2px solid var(--ink); padding-bottom: 3px; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
+.t-head b { font-weight: normal; }
+.t-pts { color: var(--accent); }
+.t-bonus { width: 12px; height: 12px; border: 2px solid var(--ink); margin-left: auto; }
+.t-row { display: flex; align-items: center; gap: 5px; }
+.t-dot { width: 10px; height: 10px; border: 2px solid var(--ink); flex: none; }
+.t-need { min-width: 42px; }
+.t-need s { color: var(--muted); }
+.t-have { min-width: 34px; color: var(--muted); }
+.t-ok { color: #1c8030; }
+.t-bad { color: var(--accent); }
+.t-foot { border-top: 2px solid var(--ink); padding-top: 3px; margin-top: 4px; }
+
+/* 弹层 */
+.overlay { position: fixed; inset: 0; background: rgba(24,24,32,.75); display: grid; place-items: center; z-index: 50; padding: 20px; }
+.dialog { background: var(--paper); border: var(--px) solid var(--ink); padding: 22px; max-width: 480px; width: 100%; box-shadow: 6px 6px 0 rgba(0,0,0,.4); }
+.dialog h2 { margin-bottom: 10px; font-size: 12px; }
+.dialog p, .dialog li { color: var(--muted); line-height: 1.9; }
+.dialog ul { margin: 10px 0 10px 18px; }
+.dialog .row { display: flex; gap: 10px; margin-top: 16px; justify-content: flex-end; }
+.win-name { color: var(--accent); font-size: 24px; }
+/* 模式切换 */
+.tabs { display: flex; gap: 0; border: var(--px) solid var(--ink); margin-bottom: 20px; }
+.tab { flex: 1; background: var(--paper2); color: var(--muted); padding: 8px 12px; }
+.tab + .tab { border-left: var(--px) solid var(--ink); }
+.tab.active { background: var(--accent); color: var(--paper); }
+
+/* 大厅 */
+#lobby { display: grid; place-items: start center; padding: 24px; }
+.lobby-wrap { width: 100%; max-width: 900px; }
+.lobby-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.lobby-head h2 { font-size: 24px; color: var(--paper); font-weight: normal; text-shadow: 2px 2px 0 rgba(0,0,0,.5); }
+.lobby-me { display: flex; align-items: center; gap: 10px; color: var(--paper2); }
+.lobby-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.panel { background: var(--paper); border: var(--px) solid var(--ink); padding: 14px; box-shadow: var(--shadow); }
+.panel h3 { font-size: 12px; margin-bottom: 10px; font-weight: normal; border-bottom: 2px solid var(--ink); padding-bottom: 5px; }
+.panel h3 small { color: var(--muted); }
+.list { display: flex; flex-direction: column; gap: 6px; max-height: 320px; overflow-y: auto; }
+.list-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--paper2); border: 2px solid var(--ink); padding: 7px 10px; }
+.muted { color: var(--muted); }
+.ok { color: #1c8030; }
+#join-code { width: 100%; background: var(--paper2); color: var(--ink); border: var(--px) solid var(--ink); padding: 8px 10px; font-size: 12px; font-family: inherit; letter-spacing: 2px; }
+.code { color: var(--accent); letter-spacing: 3px; }
+.net-badge { background: var(--paper); border: var(--px) solid var(--ink); color: var(--ink); padding: 5px 10px; box-shadow: 2px 2px 0 rgba(0,0,0,.3); }
+
+/* toast */
+.toast-root { position: fixed; top: 14px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 6px; z-index: 80; pointer-events: none; align-items: center; }
+.toast { background: var(--paper); border: var(--px) solid var(--ink); color: var(--ink); padding: 8px 14px; box-shadow: var(--shadow); transition: opacity .3s steps(4), transform .3s steps(4); }
+.toast.out { opacity: 0; transform: translateY(-6px); }
+
+/* 滚动条也做成方的 */
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--paper3); border: 2px solid var(--ink); }
+
+@media (max-width: 860px) {
+  #game { grid-template-columns: 1fr; grid-template-areas: "top" "players" "table" "action"; height: auto; }
+  .players { flex-direction: row; overflow-x: auto; }
+  .player { min-width: 200px; }
+  .lobby-grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>璀璨宝石 · 宝可梦</title>
+  <link rel="preload" href="./assets/fonts/fusion-pixel-12px-sc.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="./src/ui/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- 开始界面 -->
+    <section id="setup" class="screen">
+      <div class="setup-card">
+        <h1>璀璨宝石 <span>· 宝可梦</span></h1>
+        <p class="tagline">收集能量，训练宝可梦，赢得博士青睐 —— 率先取得 15 声望的训练家获胜。</p>
+        <div class="tabs" id="mode-tabs">
+          <button class="tab active" data-mode="hot">同屏热座</button>
+          <button class="tab" data-mode="net">联机对战</button>
+        </div>
+
+        <div id="pane-hot" class="pane">
+          <label class="field">
+            <span>训练家人数</span>
+            <select id="player-count">
+              <option value="2">2 人</option>
+              <option value="3">3 人</option>
+              <option value="4">4 人</option>
+            </select>
+          </label>
+          <div id="name-fields" class="name-fields"></div>
+          <button id="start-btn" class="btn-primary">开始对战</button>
+          <p class="hint">本地热座模式：轮流使用同一设备操作。</p>
+        </div>
+
+        <div id="pane-net" class="pane hidden">
+          <label class="field">
+            <span>你的训练家名</span>
+            <input id="net-name" type="text" maxlength="10" />
+          </label>
+          <button id="enter-lobby-btn" class="btn-primary">进入大厅</button>
+          <p class="hint">浏览器直连（WebRTC），无需服务器。同一房间码即可开局。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 大厅：在线名单 + 房间发现 -->
+    <section id="lobby" class="screen hidden">
+      <div class="lobby-wrap">
+        <header class="lobby-head">
+          <h2>联机大厅</h2>
+          <div class="lobby-me">
+            <span id="lobby-my-name"></span>
+            <button id="lobby-rename" class="btn-mini">改名</button>
+            <button id="lobby-back" class="btn-mini">返回</button>
+          </div>
+        </header>
+        <div class="lobby-grid">
+          <div class="panel">
+            <h3>在线训练家 <small id="online-count"></small></h3>
+            <div id="online-list" class="list"></div>
+          </div>
+          <div class="panel">
+            <h3>可加入的房间</h3>
+            <div id="room-list" class="list"></div>
+            <div class="row" style="margin-top:12px">
+              <button id="create-room-btn" class="btn-mini primary">开新房间</button>
+            </div>
+            <label class="field" style="margin-top:12px">
+              <span>用房间码加入</span>
+              <input id="join-code" type="text" placeholder="PKMN-XXXX" maxlength="12" />
+            </label>
+            <button id="join-code-btn" class="btn-mini">加入</button>
+          </div>
+        </div>
+        <p class="hint" id="lobby-status">正在连接信令网络…</p>
+      </div>
+    </section>
+
+    <!-- 房间等待区 -->
+    <section id="room" class="screen hidden">
+      <div class="setup-card">
+        <h2>房间 <span id="room-code" class="code"></span></h2>
+        <p class="tagline">把房间码发给朋友，他们在大厅输入即可加入。</p>
+        <div id="room-seats" class="list"></div>
+        <div class="row" style="margin-top:16px">
+          <button id="ready-btn" class="btn-mini primary">准备</button>
+          <button id="start-net-btn" class="btn-mini">开始对战</button>
+          <button id="leave-room-btn" class="btn-mini">离开</button>
+        </div>
+        <p class="hint" id="room-status"></p>
+      </div>
+    </section>
+
+    <!-- 游戏界面 -->
+    <section id="game" class="screen hidden">
+      <header class="topbar">
+        <div class="bank" id="bank"></div>
+        <div class="topbar-actions">
+          <span id="net-badge" class="net-badge hidden"></span>
+          <button id="mute-btn" class="btn-icon" title="静音">音</button>
+          <button id="rules-btn" class="btn-icon" title="规则">规则</button>
+        </div>
+      </header>
+      <main class="table">
+        <div class="nobles-row" id="nobles"></div>
+        <div class="cards-area" id="board"></div>
+      </main>
+      <aside class="players" id="players"></aside>
+      <div class="action-bar" id="action-bar"></div>
+    </section>
+
+    <!-- 弹层：胜利 / 规则 / 弃牌 -->
+    <div id="modal-root"></div>
+    <div id="toast-root" class="toast-root"></div>
+  </div>
+  <script type="module" src="./src/ui/app.js"></script>
+</body>
+</html>
