@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="精灵球">
+  <title>璀璨宝石 · 宝可梦</title>
+  <!-- 配色取自 src/ui/styles.css 的 CSS 变量：ink #181820 / accent #e04038 / paper #f8f4e0 -->
+  <defs>
+    <clipPath id="ball">
+      <circle cx="16" cy="16" r="12.5" />
+    </clipPath>
+  </defs>
+  <!-- 外描边 -->
+  <circle cx="16" cy="16" r="14.6" fill="#181820" />
+  <!-- 球体：上半红、下半纸色、中缝墨带 -->
+  <g clip-path="url(#ball)">
+    <rect x="0" y="0" width="32" height="16" fill="#e04038" />
+    <rect x="0" y="16" width="32" height="16" fill="#f8f4e0" />
+    <rect x="0" y="13.4" width="32" height="5.2" fill="#181820" />
+  </g>
+  <!-- 中央按钮 -->
+  <circle cx="16" cy="16" r="5.6" fill="#181820" />
+  <circle cx="16" cy="16" r="3" fill="#f8f4e0" />
+</svg>
