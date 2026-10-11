@@ -36,7 +36,9 @@ export async function joinGameRoom(roomId, identity) {
 
   return {
     roomId,
-    selfPeerId: selfId,
+    // 真实 trystero 里一个页面只有一个 selfId，但测试要在一个进程里模拟多个端点，
+    // 模块级常量无法区分它们。所以优先取房间自己的 id，取不到再回落到 selfId。
+    selfPeerId: room.selfId || selfId,
     identity,
 
     // send(type, data)                -> 广播

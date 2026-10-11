@@ -1,5 +1,5 @@
 // 纯函数游戏引擎：完整 Splendor 规则。不依赖 DOM / 网络。
-import { CARDS, COLORS, GOLD } from './cards.js';
+import { CARDS, COLORS } from './cards.js';
 import { NOBLES } from './nobles.js';
 
 const WIN_POINTS = 15;
@@ -29,7 +29,9 @@ export function createGame(playerInfos, rng = Math.random) {
   const setup = bankSetup(n);
 
   const byTier = { 1: [], 2: [], 3: [] };
-  for (const c of CARDS) byTier[c.tier].push(c);
+  // 克隆一份再上桌：CARDS 是模块级常量，直接放引用的话，
+  // 任何一处改了牌面数据都会永久污染全局，影响之后所有对局。
+  for (const c of CARDS) byTier[c.tier].push({ ...c, cost: { ...c.cost } });
   const decks = {};
   const board = {};
   for (const t of [1, 2, 3]) {
@@ -38,7 +40,9 @@ export function createGame(playerInfos, rng = Math.random) {
     decks[t] = d;
   }
 
-  const nobles = shuffle(NOBLES, rng).slice(0, setup.nobles);
+  // 贵族同理，克隆出独立的 requires。
+  const nobles = shuffle(NOBLES, rng).slice(0, setup.nobles)
+    .map((nb) => ({ ...nb, requires: { ...nb.requires } }));
 
   const players = playerInfos.map((p) => ({
     id: p.id, name: p.name,
@@ -57,7 +61,6 @@ export function createGame(playerInfos, rng = Math.random) {
     perColor: setup.per,
     current: 0, startPlayer: 0,
     endTriggered: false, winner: null,
-    lastEvents: [],
   };
 }
 
@@ -98,12 +101,20 @@ export function canAfford(pl, card) {
 
 function applyDiscard(pl, bank, discard) {
   if (!discard) return null;
+  // 先把所有项校验完再落账：中途失败不该留下改了一半的状态。
+  const drops = {};
   for (const c of COLORS) {
     const d = discard[c] || 0;
-    if (d < 0 || d > pl.tokens[c]) return 'bad_discard';
-    pl.tokens[c] -= d;
-    bank[c] += d;
+    // 非整数（例如字符串或 NaN）会让 tokens 变成 NaN，之后所有校验都失效，必须挡住。
+    if (!Number.isInteger(d) || d < 0 || d > pl.tokens[c]) return 'bad_discard';
+    drops[c] = d;
   }
+  // 大师球计入 10 张上限，所以必须同样可弃，否则手上黄金多时会"超限却无牌可弃"。
+  const g = discard.gold || 0;
+  if (!Number.isInteger(g) || g < 0 || g > pl.gold) return 'bad_discard';
+
+  for (const c of COLORS) { pl.tokens[c] -= drops[c]; bank[c] += drops[c]; }
+  pl.gold -= g; bank.gold += g;
   return null;
 }
 
@@ -152,10 +163,16 @@ export function applyAction(prev, playerId, action) {
   const events = [];
 
   if (action.type === 'take3') {
-    const cols = [...new Set(action.colors || [])];
-    if (cols.length !== (action.colors || []).length) return { ok: false, error: 'colors_must_differ' };
-    if (cols.length < 1 || cols.length > 3) return { ok: false, error: 'take3_count' };
-    for (const c of cols) { if (!COLORS.includes(c)) return { ok: false, error: 'bad_color' }; if (bank[c] < 1) return { ok: false, error: 'empty_pile' }; }
+    const raw = action.colors;
+    // 联机时 action 由远端 peer 传来，先确认形状再解构 —— 否则会抛异常打断房主的消息处理。
+    if (!Array.isArray(raw)) return { ok: false, error: 'take3_count' };
+    const cols = [...new Set(raw)];
+    if (cols.length !== raw.length) return { ok: false, error: 'colors_must_differ' };
+    for (const c of cols) if (!COLORS.includes(c)) return { ok: false, error: 'bad_color' };
+    // 规则是「3 种不同色各 1」；只有银行里可选的颜色不足 3 种时，才允许按实际数量少拿。
+    const avail = COLORS.filter((c) => bank[c] > 0).length;
+    if (cols.length !== Math.min(3, avail)) return { ok: false, error: 'take3_count' };
+    for (const c of cols) if (bank[c] < 1) return { ok: false, error: 'empty_pile' };
     for (const c of cols) { bank[c]--; pl.tokens[c]++; }
   } else if (action.type === 'take2') {
     const c = action.color;
@@ -166,7 +183,9 @@ export function applyAction(prev, playerId, action) {
     if (pl.reserved.length >= 3) return { ok: false, error: 'reserve_full' };
     let card;
     if (action.source === 'deck') {
+      // tier 可能来自远端，越界会让 decks[tier].length 直接抛异常。
       const d = state.decks[action.tier];
+      if (!d) return { ok: false, error: 'bad_tier' };
       if (!d.length) return { ok: false, error: 'deck_empty' };
       card = d.pop();
     } else {
@@ -211,7 +230,6 @@ export function applyAction(prev, playerId, action) {
   checkNobles(state, pl, events);
   if (pl.points >= WIN_POINTS) state.endTriggered = true;
   advance(state);
-  state.lastEvents = events;
   return { ok: true, state, events };
 }
 

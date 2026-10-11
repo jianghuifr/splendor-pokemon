@@ -135,6 +135,73 @@ test('第 5 人被拒：房间已满', async (t) => {
   assert.ok(notices.includes('房间已满（最多 4 人）'), '应收到满员提示，实际：' + notices);
 });
 
+test('只认房主发来的状态：房间内其他人伪造 state 会被忽略', async (t) => {
+  const asPlayer = arena(t);
+  const host = await asPlayer(1, { roomId: 'PKMN-FAKE', asHost: true });
+  const guest = await asPlayer(2, { roomId: 'PKMN-FAKE', asHost: false });
+  guest.setReady(true);
+  await settle();
+  host.start();
+  await settle();
+  assert.ok(guest.state, '客人应已拿到开局状态');
+  const realCurrent = guest.state.current;
+
+  // 第三方只连上房间、不入座，直接广播一份"我赢了"的状态。
+  globalThis.__who = { id: 'u9', name: '路人', fp: 'fp9' };
+  const { joinGameRoom } = await import('./room.js');
+  const outsider = await joinGameRoom('PKMN-FAKE', { id: 'u9', name: '路人' });
+  t.after(() => outsider.leave());
+
+  const forged = JSON.parse(JSON.stringify(guest.state));
+  forged.winner = 'u9';
+  forged.endTriggered = true;
+  forged.current = 99;
+  outsider.send('state', { game: forged, events: [] });
+  await settle();
+
+  assert.notEqual(guest.state.winner, 'u9', '伪造的 winner 必须被忽略');
+  assert.equal(guest.state.current, realCurrent, '客人状态不应被第三方改写');
+
+  // 但房主自己发的状态仍然照常生效。
+  const firstId = host.state.players[host.state.current].id;
+  if (firstId === 'u1') host.submit({ type: 'take3', colors: ['w', 'u', 'g'] });
+  else guest.submit({ type: 'take3', colors: ['w', 'u', 'g'] });
+  await settle();
+  assert.equal(guest.state.current, host.state.current, '房主的状态仍应正常同步');
+});
+
+test('房主离开后客人会被告知本局无法继续（以前是无声死局）', async (t) => {
+  const asPlayer = arena(t);
+  const host = await asPlayer(1, { roomId: 'PKMN-GONE', asHost: true });
+  const guest = await asPlayer(2, { roomId: 'PKMN-GONE', asHost: false });
+  guest.setReady(true);
+  await settle();
+  host.start();
+  await settle();
+  assert.ok(guest.state, '客人应已拿到牌局');
+  assert.equal(guest.hostGone, false);
+
+  const notices = [];
+  guest.onNotice((m) => notices.push(m));
+  host.leave();
+  await settle();
+
+  assert.equal(guest.hostGone, true, '客人必须知道房主走了');
+  assert.ok(notices.some((m) => /房主已离开/.test(m)), '应给出提示，实际：' + JSON.stringify(notices));
+});
+
+test('被拒入座后停止握手心跳（否则会永远空转）', async (t) => {
+  const asPlayer = arena(t);
+  for (let i = 1; i <= 4; i++) await asPlayer(i, { roomId: 'PKMN-FULL', asHost: i === 1 });
+  const rejected = await asPlayer(5, { roomId: 'PKMN-FULL', asHost: false });
+  const notices = [];
+  rejected.onNotice((m) => notices.push(m));
+  await settle();
+  // 让心跳有机会再跑几轮
+  await new Promise((r) => setTimeout(r, 60));
+  assert.ok(notices.some((m) => /房间已满/.test(m)), '应收到满员提示，实际：' + JSON.stringify(notices));
+});
+
 test('大厅能互相发现在线的人和开着的房', async (t) => {
   __resetFakeNet();
   const { joinLobby } = await import('./lobby.js');

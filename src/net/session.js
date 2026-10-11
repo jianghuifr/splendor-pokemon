@@ -67,12 +67,14 @@ export const DENY_TEXT = {
   must_discard: '宝石会超过 10 个，需要先弃牌',
   cannot_afford: '宝石不够，买不起这张卡',
   colors_must_differ: '拿 3 个必须是不同颜色',
-  take3_count: '拿 3 个需要正好选 3 种颜色',
+  take3_count: '拿 3 个需要正好选 3 种不同颜色（银行可选色不足 3 种时才可少拿）',
   need_4_to_take2: '同色拿 2 个需要银行该色 ≥ 4',
   bad_color: '这个宝石颜色不存在',
   reserve_full: '预定区已满（最多 3 张）',
   deck_empty: '该牌堆已空',
-  empty_pile: '该位置没有卡',
+  bad_tier: '卡牌等级不存在',
+  bad_discard: '弃牌数量不合法',
+  empty_pile: '该颜色的宝石已经拿光了',
   no_card: '找不到这张卡',
   not_reserved: '这张卡不在你的预定区',
   no_such_player: '找不到这个玩家',
@@ -95,6 +97,8 @@ export async function createNetSession({ roomId, asHost }) {
     roster: [],                  // [{id,name,online,ready,peerId}]
     myId: identity.id,
     hostId: asHost ? identity.id : null,
+    hostPeerId: asHost ? room.selfPeerId : null,   // 只认这个 peer 发来的权威状态
+    hostGone: false,                               // 房主掉线：本局已无法继续
     onChange: changed.on,
     onNotice: noticed.on,
     controls(playerId) { return playerId === identity.id; },
@@ -111,6 +115,8 @@ export async function createNetSession({ roomId, asHost }) {
     const broadcastRoster = () => {
       room.send('roster', {
         hostId: identity.id,
+        // 客户端靠它判断"谁才是房主"。座位表里刻意不带 peerId，所以必须单独广播。
+        hostPeerId: room.selfPeerId,
         phase: s.phase,
         seats: s.roster.map(({ peerId, ...r }) => r),
       });
@@ -219,34 +225,65 @@ export async function createNetSession({ roomId, asHost }) {
   const sayHello = () => {
     room.send('hello', { id: identity.id, name: identity.name, fp: identity.fp });
   };
+  const stopHello = () => { if (helloTimer) { clearInterval(helloTimer); helloTimer = null; } };
+  // 握手最长等约 60 秒（4 秒一次 × 15）。被拒或房主根本不在时都必须停，
+  // 否则心跳会永远空转、界面也一直卡在"正在连接…"。
+  let helloTries = 0;
+  const HELLO_MAX = 15;
 
   room.on('roster', (d) => {
     if (!d) return;
+    helloTries = 0;
     s.hostId = d.hostId;
+    s.hostPeerId = d.hostPeerId || s.hostPeerId;
     s.phase = d.phase;
     s.roster = d.seats || [];
+    if (s.roster.some((r) => r.id === identity.id)) stopHello();
     push();
   });
 
-  room.on('state', (d) => {
+  // 只接受房主发来的权威状态。否则房间内任何一个 peer 都能整份替换战局
+  // （例如直接广播一个 winner=自己 的状态，让全场弹结算框）。
+  // hostPeerId 还没学到时放行：roster 与 state 走同一条有序通道且 roster 先发，
+  // 正常流程不会落到这个分支。
+  const fromHost = (peerId) => !s.hostPeerId || peerId === s.hostPeerId;
+
+  room.on('state', (d, peerId) => {
+    if (!fromHost(peerId)) return;
     if (!d || !d.game) return;
     s.state = d.game;
     s.phase = 'playing';
     push({ events: d.events || [] });
   });
 
-  room.on('deny', (d) => {
-    noticed.fire(DENY_TEXT[d && d.reason] || ('操作被拒绝：' + (d && d.reason)));
+  room.on('deny', (d, peerId) => {
+    if (!fromHost(peerId)) return;
+    const reason = d && d.reason;
+    noticed.fire(DENY_TEXT[reason] || ('操作被拒绝：' + reason));
+    // 被拒入座就别再握手了，一直发只会让玩家以为还在连。
+    if (reason === 'room_full' || reason === 'game_started') stopHello();
+    push();
+  });
+
+  // 房主离开 = 本局无法继续（状态只存在房主内存里）。以前这里什么都没做，
+  // 客人那边会安静地卡在"轮到 XX"，点哪儿都没反应。
+  room.onPeerLeave((peerId) => {
+    if (!s.hostPeerId || peerId !== s.hostPeerId) return;
+    s.hostGone = true;
+    noticed.fire('房主已离开，本局无法继续。请退出后重新开一局。');
     push();
   });
 
   room.onPeerJoin(() => sayHello());
-  helloTimer = setInterval(sayHello, 4000);   // 房主晚到或重连时补握手
-  const stopHello = room.on('roster', () => {
-    if (s.roster.some((r) => r.id === identity.id)) {
-      clearInterval(helloTimer); helloTimer = null; stopHello();
+  helloTimer = setInterval(() => {
+    if (s.roster.some((r) => r.id === identity.id)) { stopHello(); return; }
+    if (++helloTries >= HELLO_MAX) {
+      stopHello();
+      noticed.fire('连不上房主（或信令网络不可达）。请确认房间码，并检查网络后重试。');
+      return;
     }
-  });
+    sayHello();
+  }, 4000);   // 房主晚到或重连时补握手
   sayHello();
 
   s.setReady = (v) => room.send('ready', { ready: !!v });
@@ -255,6 +292,6 @@ export async function createNetSession({ roomId, asHost }) {
   s.submit = (action) => { room.send('intent', { action }); return { ok: true, pending: true }; };
   s.dryRun = (action) => applyAction(s.state, identity.id, action);
   const origLeave = s.leave;
-  s.leave = () => { if (helloTimer) clearInterval(helloTimer); origLeave(); };
+  s.leave = () => { stopHello(); origLeave(); };
   return s;
 }

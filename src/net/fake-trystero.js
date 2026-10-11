@@ -27,6 +27,10 @@ export function joinRoom(config, roomId, callbacks) {
   const others = () => [...bus].filter((e) => e !== me && !e.left);
 
   const room = {
+    // 本端点自身的 peerId。真实 trystero 一个页面只有一个 selfId，但这里要在一个进程里
+    // 模拟多个端点，所以每个 room 报自己的 id，让上层能区分"我"和"对端"。
+    selfId: me.peerId,
+
     makeAction(ns) {
       if (me.actions.has(ns)) return me.actions.get(ns);
       let onMessage = null;

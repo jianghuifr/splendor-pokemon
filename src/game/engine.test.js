@@ -21,6 +21,63 @@ test('数据完整性：90 张卡 40/30/20，10 张贵族', () => {
   assert.equal(NOBLES.length, 10);
 });
 
+// 规则原文是「拿走三个不同颜色的指示物」：银行有 3 种以上可选时必须拿满 3 种，
+// 只有在可选色不足 3 种时才允许少拿。
+test('take3：银行够 3 色时必须正好拿 3 种，少拿要被拒', () => {
+  for (const colors of [['w'], ['w', 'u']]) {
+    const r = applyAction(mkGame(2), 'p0', { type: 'take3', colors });
+    assert.equal(r.ok, false, `拿 ${colors.length} 色应被拒`);
+    assert.equal(r.error, 'take3_count');
+  }
+  assert.equal(applyAction(mkGame(2), 'p0', { type: 'take3', colors: ['w', 'u', 'g'] }).ok, true);
+});
+
+test('take3：银行只剩 2 色时允许拿 2 色，但不能凑 3 色', () => {
+  const g = mkGame(2);
+  Object.assign(g.bank, { w: 2, u: 2, g: 0, r: 0, k: 0 });
+  assert.equal(applyAction(g, 'p0', { type: 'take3', colors: ['w', 'u'] }).ok, true);
+  assert.equal(applyAction(g, 'p0', { type: 'take3', colors: ['w', 'u', 'g'] }).error, 'take3_count');
+});
+
+test('非法输入返回 {ok:false} 而不是抛异常（联机时 action 来自远端）', () => {
+  const bad = [
+    { type: 'reserve', source: 'deck' },
+    { type: 'reserve', source: 'deck', tier: 9 },
+    { type: 'take3', colors: {} },
+    { type: 'take3', colors: 5 },
+    { type: 'take3', colors: 'wu' },
+  ];
+  for (const action of bad) {
+    let r;
+    assert.doesNotThrow(() => { r = applyAction(mkGame(2), 'p0', action); }, JSON.stringify(action));
+    assert.equal(r.ok, false, JSON.stringify(action));
+  }
+});
+
+test('大师球计入 10 张上限，也必须可以弃掉', () => {
+  const g = mkGame(2);
+  g.players[0].gold = 8;                        // 拿 3 个宝石后是 11 张，需弃 1
+  g.players[0].tokens = { w: 0, u: 0, g: 0, r: 0, k: 0 };
+  const r = applyAction(g, 'p0', { type: 'take3', colors: ['w', 'u', 'g'], discard: { gold: 1 } });
+  assert.equal(r.ok, true, '弃大师球应被接受：' + r.error);
+  assert.equal(r.state.players[0].gold, 7);
+  assert.equal(r.state.bank.gold, 6);
+  // 不弃就该被拒
+  const g2 = mkGame(2);
+  g2.players[0].gold = 8;
+  g2.players[0].tokens = { w: 0, u: 0, g: 0, r: 0, k: 0 };
+  assert.equal(applyAction(g2, 'p0', { type: 'take3', colors: ['w', 'u', 'g'] }).error, 'must_discard');
+});
+
+test('弃牌数量非法（负数 / 小数 / 超出持有）一律拒绝', () => {
+  const mk = () => { const g = mkGame(2); g.players[0].gold = 11; return g; };
+  for (const discard of [{ gold: -1 }, { gold: 1.5 }, { gold: 99 }, { gold: '2' }]) {
+    const r = applyAction(mk(), 'p0', { type: 'take3', colors: ['w', 'u', 'g'], discard });
+    assert.equal(r.ok, false, JSON.stringify(discard) + ' 应被拒');
+    assert.equal(r.error, 'bad_discard');
+  }
+});
+
 test('初始化：2 人每色 4 宝石 + 5 黄金 + 3 贵族，各级 4 张展示', () => {
   const g = mkGame(2);
   for (const c of ['w', 'u', 'g', 'r', 'k']) assert.equal(g.bank[c], 4);

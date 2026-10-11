@@ -4,15 +4,17 @@ import { CARDS } from './cards.js';
 const BASE = './assets';
 const cries = new Set(['abra','bulbasaur','charmander','chikorita','cubone','cyndaquil','dratini','eevee','gengar','jigglypuff','lapras','magikarp','meowth','mew','oddish','pikachu','poliwag','psyduck','snorlax','squirtle','togepi','totodile','vulpix']);
 
-// 5 宝石色 → 属性主题
+// 5 宝石色 → 属性主题。这里只放显示名：**底色只在 src/ui/styles.css 的 [data-color] 里定义一份**。
+// 曾经这里也维护了一套 hex，于是同一个"超能"在银行是亮紫、在面板和贵族格是近黑，
+// 而贵族格用深色文字压在近黑底上，数字几乎看不见。别再往这里加颜色。
 export const COLOR_META = {
-  w: { name: '一般', hex: '#e8e2d0', text: '#5a5344' },
-  u: { name: '水', hex: '#4a90d9', text: '#e6f2ff' },
-  g: { name: '草', hex: '#5fbf6b', text: '#eafff0' },
-  r: { name: '火', hex: '#e0533d', text: '#fff0ec' },
-  k: { name: '超能', hex: '#3a3550', text: '#efe9ff' },
+  w: { name: '一般' },
+  u: { name: '水' },
+  g: { name: '草' },
+  r: { name: '火' },
+  k: { name: '超能' },
 };
-export const GOLD_META = { name: '大师球', hex: '#f4c542', text: '#5a4700' };
+export const GOLD_META = { name: '大师球' };
 
 // 各色宝可梦按进化阶段分组：tier1=初始, tier2=中间, tier3=最终/传说。
 const POOLS = {
