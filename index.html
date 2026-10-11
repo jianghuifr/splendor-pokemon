@@ -4,6 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>璀璨宝石 · 宝可梦</title>
+  <!-- 站点部署在项目页子路径下，所以图标一律用相对路径，和 assets/ 的其它引用保持一致。
+       PNG 在前作兜底，SVG 在后让现代浏览器优先选矢量版。 -->
+  <link rel="icon" href="./assets/favicon-32.png" sizes="32x32" type="image/png" />
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png" />
   <link rel="preload" href="./assets/fonts/fusion-pixel-12px-sc.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="./src/ui/styles.css" />
 </head>
@@ -113,6 +118,8 @@
     <!-- 弹层：胜利 / 规则 / 弃牌 -->
     <div id="modal-root"></div>
     <div id="toast-root" class="toast-root"></div>
+    <!-- 读屏播报区：flash()/toast() 的内容会同步写进来 -->
+    <div id="live" class="sr-only" role="status" aria-live="polite"></div>
   </div>
   <script type="module" src="./src/ui/app.js"></script>
 </body>

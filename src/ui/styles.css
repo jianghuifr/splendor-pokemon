@@ -7,12 +7,18 @@
 }
 
 :root {
-  /* 宝石色：为浅底板重新调过，保证 12px 点阵字在上面读得清 */
-  --w: #d8cfb0; --u: #3878d8; --g: #38a848; --r: #e04038; --k: #7838b0; --gold: #f0c020;
+  /* 宝石色：为浅底板重新调过，保证 12px 点阵字在上面读得清。
+     u / r 比原色再深一档：色块里的文字只有 12px，原值配纸色文字只有 3.92 / 3.83:1，
+     达不到 AA 的 4.5；调深后是 4.68:1，色相没变只是压暗。 */
+  --w: #d8cfb0; --u: #2f6cc4; --g: #38a848; --r: #c8382e; --k: #7838b0; --gold: #f0c020;
   --ink: #181820; --ink2: #4c4c60;
   --paper: #f8f4e0; --paper2: #e4dcc0; --paper3: #d0c8a8;
   --bg: #204090; --bg2: #182c68;
   --accent: #e04038; --accent2: #3878d8;
+  /* 浅底上的红字 / 红底上的浅字都用这个。--accent 作正文只有 3.08~3.83:1，
+     达不到 AA 的 4.5；这个更深一档，压 paper 是 5.9:1、压 paper2 是 4.8:1。
+     --accent 保留给纯装饰（当前回合描边、选中描边）。 */
+  --accent-ink: #b3261e;
   --text: #181820; --muted: #5c5c70;
   --radius: 0; --shadow: 4px 4px 0 rgba(0,0,0,.35);
   --px: 3px; /* 统一边框宽度 */
@@ -23,6 +29,16 @@
   font-synthesis: none;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
+/* 读屏专用：视觉上不可见，但仍在可访问树里（#live 播报区用） */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+/* 键盘焦点环。像素风里 UA 默认环太细看不清，统一换成 accent2 硬边描边。
+   只对 :focus-visible 生效，鼠标点击不会出现描边。 */
+[role=button]:focus-visible, button:focus-visible, a:focus-visible {
+  outline: 3px solid var(--accent2); outline-offset: 2px;
+}
 body {
   background: var(--bg);
   background-image:
@@ -38,13 +54,15 @@ body {
 img { image-rendering: pixelated; }
 /* 点阵字体只在 12px 整数倍上清晰，小字号一律锁回 12px，靠颜色区分层级 */
 small { font-size: inherit; color: var(--muted); }
-.tally small { color: var(--accent2); }
+/* +加成 的数字：原本用 accent2，在 paper2 上只有 3.16:1；这里不需要靠颜色表达语义，
+   换成中性色即可（4.75:1）。 */
+.tally small { color: var(--muted); }
 .hidden { display: none !important; }
 button { font: inherit; cursor: pointer; border: none; }
 
 /* 像素按钮：按下时阴影收进去，模拟物理下沉 */
 .btn-primary {
-  background: var(--accent); color: var(--paper);
+  background: var(--accent-ink); color: var(--paper);
   border: var(--px) solid var(--ink);
   padding: 10px 20px; font-size: 12px;
   box-shadow: var(--shadow);
@@ -62,7 +80,7 @@ button { font: inherit; cursor: pointer; border: none; }
 .btn-icon:active { transform: translate(3px, 3px); box-shadow: none; }
 
 /* 开始界面 */
-.screen { min-height: 100vh; }
+.screen { min-height: 100vh; min-height: 100dvh; }
 #setup { display: grid; place-items: center; padding: 24px; }
 .setup-card {
   background: var(--paper); border: var(--px) solid var(--ink);
@@ -80,11 +98,20 @@ select, input[type="text"] {
   border-radius: 0; -webkit-appearance: none; appearance: none;
 }
 input::placeholder { color: var(--muted); opacity: 1; }
-/* 房间码是 ASCII 码值，等宽 + 大写字距更好认 */
-#join-code { text-transform: uppercase; letter-spacing: 1px; }
+/* 去掉了原生下拉箭头就得自己画一个，否则 select 看起来和普通输入框一模一样。
+   用内联 SVG 画硬边三角，保持像素风（不用渐变/圆角）。 */
+select {
+  padding-right: 26px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><polygon points='0,0 10,0 5,6' fill='%23181820'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
 select:focus, input:focus { outline: var(--px) solid var(--accent2); outline-offset: -1px; }
 .name-fields { display: grid; gap: 8px; margin-bottom: 20px; }
 .hint { color: var(--muted); margin-top: 14px; text-align: center; }
+/* 大厅状态行直接压在深蓝底上：--muted 在 #204090 上只有 1.47:1，几乎看不见。
+   #room-status 在纸色卡片里，仍是 --muted（5.9:1），不要一起改。 */
+#lobby-status { color: var(--paper2); }
 
 /* 游戏布局 */
 #game { display: grid; grid-template-columns: 1fr 300px; grid-template-rows: auto 1fr auto; grid-template-areas: "top top" "table players" "action action"; gap: 12px; padding: 12px; height: 100vh; }
@@ -106,24 +133,64 @@ select:focus, input:focus { outline: var(--px) solid var(--accent2); outline-off
   box-shadow: 3px 3px 0 rgba(0,0,0,.3);
 }
 .gem .dot { width: 14px; height: 14px; background: var(--c); border: 2px solid var(--ink); }
+/* 筹码上的属性名：颜色之外的第二重编码，弱化处理让数量仍是主角。 */
+.gem .gname { color: var(--muted); }
 .gem.selectable { cursor: pointer; }
 .gem.selectable:hover { background: var(--gold); }
 .gem.picked { background: var(--gold); box-shadow: inset 0 0 0 2px var(--ink), 3px 3px 0 rgba(0,0,0,.3); }
 .gem[data-picked]::after {
   content: "×" attr(data-picked); position: absolute; top: -8px; right: -8px;
-  background: var(--accent); color: var(--paper); border: 2px solid var(--ink);
+  background: var(--accent-ink); color: var(--paper); border: 2px solid var(--ink);
   padding: 0 3px; font-size: 12px; line-height: 1.2;
 }
-.gem[data-color=w]{--c:var(--w)} .gem[data-color=u]{--c:var(--u)} .gem[data-color=g]{--c:var(--g)} .gem[data-color=r]{--c:var(--r)} .gem[data-color=k]{--c:var(--k)} .gem[data-color=gold]{--c:var(--gold)}
+/* 宝石色的唯一来源：--c 是底色，--ct 是压在它上面的文字色。
+   以前 JS 里还有第二套 hex，导致同一个"超能"在银行是亮紫、在面板是近黑。
+   现在各处只标 data-color，颜色全部从这里取。 */
+[data-color=w]{--c:var(--w);--ct:var(--ink)}
+[data-color=u]{--c:var(--u);--ct:var(--paper)}
+[data-color=g]{--c:var(--g);--ct:var(--ink)}
+[data-color=r]{--c:var(--r);--ct:var(--paper)}
+[data-color=k]{--c:var(--k);--ct:var(--paper)}
+[data-color=gold]{--c:var(--gold);--ct:var(--ink)}
+/* 所有"以宝石色填充的小色块"统一在这里上色。 */
+.bonus, .cost i, .noble .req i, .sw, .t-dot, .res-bonus, .t-bonus, .tally .dot { background: var(--c); }
+/* 色块里要放文字的两处跟着底色走文字色，否则深底压深字会看不见。 */
+.cost i, .noble .req i { color: var(--ct); }
+
+/* 大师球：万能道具，不是"第 6 种颜色"。普通球是"白底 + 色块方块"，
+   大师球换成"淡金底 + 金色内环 + 宝可球图形"，一眼能看出不是一类。
+   底纹刻意不用平涂金色：那是 .gem.picked 表示"已选中"的用法，撞了会误读。 */
+.gem.master {
+  background: #ffeeb0;
+  box-shadow: inset 0 0 0 2px var(--gold), 3px 3px 0 rgba(0,0,0,.3);
+}
+/* 宝可球：上半金、中缝墨带、下半纸色、中央按钮。全程硬边直角，不用渐变/圆角。 */
+.gem .ball, .tally .ball {
+  position: relative; flex: none; box-sizing: border-box; overflow: hidden;
+  width: 18px; height: 18px; background: var(--paper); border: 2px solid var(--ink);
+}
+.gem .ball::before, .tally .ball::before {
+  content: ""; position: absolute; left: 0; top: 0; width: 100%; height: 8px;
+  box-sizing: border-box; background: var(--gold); border-bottom: 2px solid var(--ink);
+}
+.gem .ball::after, .tally .ball::after {
+  content: ""; position: absolute; left: 50%; top: 50%; box-sizing: border-box;
+  width: 6px; height: 6px; margin: -3px 0 0 -3px;
+  background: var(--paper); border: 2px solid var(--ink);
+}
+/* 玩家面板里空间更小，等比缩一档。 */
+.tally .ball { width: 12px; height: 12px; border-width: 1px; }
+.tally .ball::before { height: 5px; border-bottom-width: 1px; }
+.tally .ball::after { width: 4px; height: 4px; margin: -2px 0 0 -2px; border-width: 1px; }
 
 /* 贵族行 */
 .nobles-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
 .noble { background: var(--paper); border: var(--px) solid var(--ink); padding: 6px; width: 92px; text-align: center; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
 .noble img { width: 52px; height: 52px; object-fit: contain; }
-.noble .pts { color: var(--accent); font-size: 12px; }
+.noble .pts { color: var(--accent-ink); font-size: 12px; }
 .noble .req { display: flex; gap: 3px; justify-content: center; margin-top: 4px; flex-wrap: wrap; }
 /* 同 .cost i 的墨迹补偿，尺寸同样取奇数 */
-.noble .req i { width: 15px; height: 15px; display: inline-grid; place-items: center; font-style: normal; line-height: 1; padding: 0 0 1px 1px; color: var(--ink); border: 2px solid var(--ink); font-size: 12px; }
+.noble .req i { width: 15px; height: 15px; display: inline-grid; place-items: center; font-style: normal; line-height: 1; padding: 0 0 1px 1px; border: 2px solid var(--ink); font-size: 12px; }
 
 /* 卡牌区 */
 .tier { margin-bottom: 12px; }
@@ -146,7 +213,7 @@ select:focus, input:focus { outline: var(--px) solid var(--accent2); outline-off
   background: var(--g); color: var(--ink); border: 2px solid var(--ink); padding: 0 3px;
 }
 .card .head { display: flex; justify-content: space-between; padding: 4px 6px; align-items: center; background: var(--paper2); border-bottom: 2px solid var(--ink); }
-.card .pts { font-size: 12px; color: var(--accent); }
+.card .pts { font-size: 12px; color: var(--accent-ink); }
 .card .bonus { width: 16px; height: 16px; border: 2px solid var(--ink); }
 .card .sprite { height: 76px; display: grid; place-items: center; background: var(--paper); }
 .card .sprite img { max-height: 70px; max-width: 92px; }
@@ -157,15 +224,15 @@ select:focus, input:focus { outline: var(--px) solid var(--accent2); outline-off
    （右 1px 是字间距）→ 偏左 0.5px。这偏差与 line-height、容器高都无关，
    place-items:center 消不掉，靠整数 padding 把居中区推回半像素。
    尺寸取奇数：墨迹 9×5 是奇数，偶数容器里居中会把字形压到半像素上而发虚。 */
-.card .cost i { font-style: normal; min-width: 17px; height: 17px; display: inline-grid; place-items: center; font-size: 12px; line-height: 1; padding: 0 0 1px 1px; color: var(--ink); border: 2px solid var(--ink); }
+.card .cost i { font-style: normal; min-width: 17px; height: 17px; display: inline-grid; place-items: center; font-size: 12px; line-height: 1; padding: 0 0 1px 1px; border: 2px solid var(--ink); }
 
-.bonus[data-color=w],.cost i[data-color=w]{background:var(--w)} .bonus[data-color=u],.cost i[data-color=u]{background:var(--u);color:var(--paper)} .bonus[data-color=g],.cost i[data-color=g]{background:var(--g)} .bonus[data-color=r],.cost i[data-color=r]{background:var(--r);color:var(--paper)} .bonus[data-color=k],.cost i[data-color=k]{background:var(--k);color:var(--paper)}
+/* 色块底色与文字色统一由上面的 [data-color] 规则给出，这里不再重复列一遍。 */
 /* 玩家面板 */
 .player { background: var(--paper); border: var(--px) solid var(--ink); padding: 10px; box-shadow: 3px 3px 0 rgba(0,0,0,.3); }
 /* 当前回合方：与 .card.selected 同色的红框，比原黄框更抢眼，方便多人轮转时定位。 */
 .player.active { background: #fffdf0; box-shadow: 0 0 0 4px var(--accent), 3px 3px 0 rgba(0,0,0,.3); }
 .player .name { display: flex; justify-content: space-between; margin-bottom: 6px; }
-.player .score { color: var(--accent); }
+.player .score { color: var(--accent-ink); }
 .player .tallies { display: flex; gap: 4px; flex-wrap: wrap; }
 .tally { display: flex; align-items: center; gap: 3px; background: var(--paper2); border: 2px solid var(--ink); padding: 1px 4px; }
 .tally .dot { width: 10px; height: 10px; border: 1px solid var(--ink); }
@@ -185,17 +252,17 @@ select:focus, input:focus { outline: var(--px) solid var(--accent2); outline-off
 .res-card.selectable:hover { background: var(--gold); }
 .res-card.locked { cursor: not-allowed; }
 .res-card.locked:hover { background: var(--paper3); }
-.res-pts { position: absolute; top: -6px; left: -4px; background: var(--accent); color: var(--paper); border: 2px solid var(--ink); padding: 0 2px; font-size: 12px; line-height: 1.1; }
+.res-pts { position: absolute; top: -6px; left: -4px; background: var(--accent-ink); color: var(--paper); border: 2px solid var(--ink); padding: 0 2px; font-size: 12px; line-height: 1.1; }
 .res-bonus { position: absolute; bottom: -3px; right: -3px; width: 12px; height: 12px; border: 2px solid var(--ink); }
 
 /* 动作栏 */
 .turn-label { color: var(--ink); }
-.turn-label b { color: var(--accent); font-weight: normal; }
+.turn-label b { color: var(--accent-ink); font-weight: normal; }
 /* 通用行内色块：替代原先的 emoji。emoji 会走系统彩色字体，在点阵字里既破风格又撑高行盒。 */
 .sw { display: inline-block; width: 10px; height: 10px; border: 2px solid var(--ink); vertical-align: -1px; }
 
 .sel-desc { background: var(--paper2); border: 2px solid var(--ink); padding: 4px 8px; }
-.sel-desc b { font-weight: normal; color: var(--accent2); }
+.sel-desc b { font-weight: normal; color: var(--accent-ink); }
 .bar-hint { color: var(--muted); }
 .action-bar .spacer { flex: 1; }
 .btn-mini {
@@ -204,7 +271,7 @@ select:focus, input:focus { outline: var(--px) solid var(--accent2); outline-off
 }
 .btn-mini:hover:not(:disabled) { background: var(--gold); }
 .btn-mini:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: none; }
-.btn-mini.primary { background: var(--accent); color: var(--paper); }
+.btn-mini.primary { background: var(--accent-ink); color: var(--paper); }
 .btn-mini.primary:hover:not(:disabled) { background: #f05048; }
 .btn-mini:disabled { background: var(--paper3); color: var(--ink2); box-shadow: none; cursor: not-allowed; }
 
@@ -216,18 +283,40 @@ select:focus, input:focus { outline: var(--px) solid var(--accent2); outline-off
   line-height: 1.7;
 }
 .cost-tip[hidden] { display: none; }
-.t-head { border-bottom: 2px solid var(--ink); padding-bottom: 3px; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
+/* 只有数据行进这张共享网格：四列宽度由所有行一起决定，列间距才处处一致。
+   原先每行各自 min-width，各行余量不同，间隙忽宽忽窄、数字也对不齐。
+   表头/表尾刻意留在网格外——它们要横跨整宽，若也进网格会把 max-content 列撑开。 */
+.t-rows {
+  display: grid;
+  grid-template-columns: max-content max-content max-content max-content max-content;
+  /* 列间距要比表尾的 7px 大一档：表尾每组带一个色块当锚点，7px 就够；
+     这里几列全是文字，间距太小会连成一串读不成列。 */
+  column-gap: 16px; align-items: center; justify-content: start;
+}
+/* 属性名写成文字：色觉障碍下草/火、水/超能的色块几乎分不开，
+   而费用是要照着读的数据。 */
+.t-name { color: var(--muted); }
+/* 行自身不生成盒子，四个子项直接落进上面的共享网格，从而跨行对齐。 */
+.t-row { display: contents; }
+.t-head {
+  border-bottom: 2px solid var(--ink); padding-bottom: 3px; margin-bottom: 4px;
+  display: flex; align-items: center; gap: 4px;
+}
 .t-head b { font-weight: normal; }
-.t-pts { color: var(--accent); }
+.t-pts { color: var(--accent-ink); }
 .t-bonus { width: 12px; height: 12px; border: 2px solid var(--ink); margin-left: auto; }
-.t-row { display: flex; align-items: center; gap: 5px; }
-.t-dot { width: 10px; height: 10px; border: 2px solid var(--ink); flex: none; }
-.t-need { min-width: 42px; }
+.t-dot { width: 10px; height: 10px; border: 2px solid var(--ink); }
 .t-need s { color: var(--muted); }
-.t-have { min-width: 34px; color: var(--muted); }
+.t-have { color: var(--muted); }
 .t-ok { color: #1c8030; }
-.t-bad { color: var(--accent); }
-.t-foot { border-top: 2px solid var(--ink); padding-top: 3px; margin-top: 4px; }
+.t-bad { color: var(--accent-ink); }
+.t-foot {
+  border-top: 2px solid var(--ink); padding-top: 3px; margin-top: 4px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 7px;
+}
+/* "色块 + 缺口数"算一组：组内小间隙，组与组之间交给 .t-foot 的 gap。 */
+.t-lack { display: inline-flex; align-items: center; gap: 3px; }
+.t-gold { color: var(--muted); }
 
 /* 弹层 */
 .overlay { position: fixed; inset: 0; background: rgba(24,24,32,.75); display: grid; place-items: center; z-index: 50; padding: 20px; }
@@ -241,7 +330,7 @@ select:focus, input:focus { outline: var(--px) solid var(--accent2); outline-off
 .tabs { display: flex; gap: 0; border: var(--px) solid var(--ink); margin-bottom: 20px; }
 .tab { flex: 1; background: var(--paper2); color: var(--muted); padding: 8px 12px; }
 .tab + .tab { border-left: var(--px) solid var(--ink); }
-.tab.active { background: var(--accent); color: var(--paper); }
+.tab.active { background: var(--accent-ink); color: var(--paper); }
 
 /* 大厅 */
 #lobby { display: grid; place-items: start center; padding: 24px; }
@@ -257,8 +346,8 @@ select:focus, input:focus { outline: var(--px) solid var(--accent2); outline-off
 .list-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--paper2); border: 2px solid var(--ink); padding: 7px 10px; }
 .muted { color: var(--muted); }
 .ok { color: #1c8030; }
-#join-code { width: 100%; background: var(--paper2); color: var(--ink); border: var(--px) solid var(--ink); padding: 8px 10px; font-size: 12px; font-family: inherit; letter-spacing: 2px; }
-.code { color: var(--accent); letter-spacing: 3px; }
+#join-code { width: 100%; background: var(--paper2); color: var(--ink); border: var(--px) solid var(--ink); padding: 8px 10px; font-size: 12px; font-family: inherit; letter-spacing: 2px; text-transform: uppercase; }
+.code { color: var(--accent-ink); letter-spacing: 3px; }
 .net-badge { background: var(--paper); border: var(--px) solid var(--ink); color: var(--ink); padding: 5px 10px; box-shadow: 2px 2px 0 rgba(0,0,0,.3); }
 
 /* toast */
@@ -273,7 +362,28 @@ select:focus, input:focus { outline: var(--px) solid var(--accent2); outline-off
 
 @media (max-width: 860px) {
   #game { grid-template-columns: 1fr; grid-template-areas: "top" "players" "table" "action"; height: auto; }
+  /* 单列后动作栏是页面最后一格。牌桌很高，"确定/取消"会被推到屏幕外一两千像素——
+     实测选完宝石后确定按钮距银行 1472px。钉在底部，选完就能直接按。 */
+  .action-bar { position: sticky; bottom: 0; z-index: 5; }
   .players { flex-direction: row; overflow-x: auto; }
   .player { min-width: 200px; }
   .lobby-grid { grid-template-columns: 1fr; }
+}
+
+/* 触摸设备把点击目标补到 44px（Apple HIG / WCAG 2.5.5 AAA）。
+   用 pointer:coarse 限定，桌面保持紧凑。 */
+@media (pointer: coarse) {
+  .gem { min-height: 44px; }
+  .btn-mini, .btn-icon, .tab { min-height: 44px; }
+  .res-card { width: 44px; height: 44px; }
+}
+
+/* 系统开了"减少动态效果"就停掉所有 CSS 动画/过渡。
+   循环播放的宝可梦 GIF 由 app.js 换成静态图。 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
 }
